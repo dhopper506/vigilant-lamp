@@ -3,8 +3,7 @@ name: GitHub Actions Demo
 on: 
   push:
     branches: ["main"]
-    paths:
-      - "!.github/*"
+    paths-ignore: [.github/**]
       
   pull_request:
     branches: ["main"]
@@ -20,7 +19,7 @@ on:
     - cron: "15 6 * * 0"
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -34,24 +33,22 @@ jobs:
           tree
   
   Test:
-    needs: [build]
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs: Build
     environment: Test
     steps:
-      - id: echo
-        shell: bash
-        run: |
-          echo Testing...
-        
+      - run: echo "🧪 Testing..."
+
   Load-Test:
-    needs: [build]
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs: Build
     environment: Load-Test
     steps:
-      - id: echo
-        shell: bash
-        run: |
-          echo Testing...
+      - run: |
+          echo "🧪 Testing..."
+          sleep 15
 
   Production:
     runs-on: ubuntu-latest
